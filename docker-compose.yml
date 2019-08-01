@@ -1,0 +1,31 @@
+version: '2'
+services:
+  cic:
+    build: ./
+    image: flaskframe:v0.1.0
+    container_name:
+      flaskframe
+    ports:
+      - "8880:80"
+    env_file: .env
+    environment:
+      - WORKERS_PER_CORE=1              #worker_processes = WORKERS_PER_CORE*CPU cores
+      - APP_MODULE=manage:app
+      - LOG_LEVEL=info
+      - HOST_PATH=/var/appdata          #日志目录
+      - RUN_ENV=dev                     # dev:开发环境; pro:生产环境;
+      - CACHEREDIS_URI=redis:6379:2     #redis连接
+    volumes:
+      - ./out:/var/appdata
+      - ./log:/var/log
+#    links:
+#      - redis
+
+#  redis:
+#    restart: always
+#    image: redis:latest
+#    volumes:
+#      - /data/redis-docker:/data
+#    ports:
+#      - "6389:6379"
+#    command: "redis-server --appendonly yes"
