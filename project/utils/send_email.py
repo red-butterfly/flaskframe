@@ -13,8 +13,8 @@ from utils.tools import datetime2str
 
 
 _logger = None
-_email_sender = 'sakura.long@sakuralong.club'
-_email_receivers = ['fei.han@baodanyun-inc.com']
+_email_sender = ''
+_email_receivers = ['']
 _app_name = 'FlaskFrame'
 _html_format = '''
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
