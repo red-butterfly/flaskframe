@@ -78,7 +78,7 @@ class Auth():
                 auth_token = auth_tokenArr[1]
                 payload = self._decode_auth_token(auth_token)
                 if not isinstance(payload, str):
-                    #TODO 获取用户信息
+                    ##TODO 获取用户信息
                     user = ['user': 'hanfei', 'login_time': 123]
                     if (user is None):
                         result =(400, '找不到该用户信息')
