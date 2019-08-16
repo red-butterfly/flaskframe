@@ -9,7 +9,7 @@ class Config():
     '''
     APP_NAME = 'flaskframe'
 
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'Yf\x82\x07A\x9d\xb0\xe2\x93\x8aH?M\x83\xcf\xda\xf6\xa5\xc9\xf7\xcb%2^'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or b']\xe5\x18\x1euE\x9c\x05\xd8\x8f\x91\xba\xb9\xbd\xf0\xd65\x85j\xf3\xe4\xaa\xc3+'
     LOG_LEVEL = os.environ.get('LOG_LEVEL') or 'INFO'
     LOGFILE_PATH = os.path.join(os.environ.get('HOST_PATH'), 'log') if os.environ.get('HOST_PATH') else '/var/log'
 

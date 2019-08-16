@@ -8,7 +8,7 @@ from flask import request, jsonify
 from functools import wraps
 
 
-class RequsetDecorator(object):
+class RequsetDecorator():
 
     def __init__(self):
         self.checkList = ['query', 'header', 'body-data', 'body-form', 'file']
@@ -82,7 +82,7 @@ class RequsetDecorator(object):
                 if 'file' in param_list:
                     logger.info('Files: {0}'.format(json.dumps([ file.filename for _,file in inputs['file'].items()])))
                 # 运行 route 函数
-                return func(inputs, *args, **kwargs)
+                return func(result, *args, **kwargs)
             return decorator
         return wrapper
 
