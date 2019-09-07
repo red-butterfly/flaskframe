@@ -6,6 +6,16 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 
 
+_logger_level = {
+    'fatal': logging.FATAL,
+    'critical': logging.CRITICAL,
+    'error': logging.ERROR,
+    'warning': logging.WARNING,
+    'info': logging.INFO,
+    'debug': logging.DEBUG
+}
+
+
 def initLogger(name ,filename, log_level="INFO", when='W6', interval=1, backupCount=30,
                format='%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'):
     '''
