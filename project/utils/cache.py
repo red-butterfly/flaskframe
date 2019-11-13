@@ -51,6 +51,7 @@ class CacheDB(object):
     
     _instance_lock = threading.Lock()
     _instance = {}
+    _firstinit = {}
 
     def __new__(cls, *args, **kwargs):
         with cls._instance_lock:
@@ -59,21 +60,23 @@ class CacheDB(object):
         return cls._instance[args[0]]
 
     def __init__(self, cache_uri, ctype):
-        if not cache_uri:
-            print('Can\'t get the CachelUri: {0}'.format(cache_uri))
-        if ctype == 'redis':
-            import redis
-            redis_config = parse_db_str(os.environ.get(cache_uri))
-            self.pool = redis.ConnectionPool(
-                host=redis_config['host'], 
-                port=redis_config['port'], 
-                db=redis_config['db'],
-                password=redis_config['passwd']
-            )
-            self.cache = redis.Redis(connection_pool=self.pool)
-        elif ctype == 'memcache':
-            import memcache
-            self.cache = memcache.Client([os.environ.get(cache_uri)], debug=True)
+        if cache_uri not in CacheDB._firstinit:
+            if not cache_uri:
+                print('Can\'t get the CachelUri: {0}'.format(cache_uri))
+            if ctype == 'redis':
+                import redis
+                redis_config = parse_db_str(os.getenv(cache_uri, None))
+                _redis_config = {k: redis_config[k] for k in ['host', 'port', 'db'] if k in redis_config}
+                if 'passwd' in redis_config:
+                    _redis_config['password'] = redis_config['passwd']
+                self.pool = redis.ConnectionPool(**_redis_config)
+                self.cache = redis.Redis(connection_pool=self.pool)
+
+                CacheDB._firstinit[cache_uri] = True
+            elif ctype == 'memcache':
+                import memcache
+                self.cache = memcache.Client([os.environ.get(cache_uri)], debug=True)
+                CacheDB._firstinit[cache_uri] = True
     
     def get_cache(self):
         return self.cache

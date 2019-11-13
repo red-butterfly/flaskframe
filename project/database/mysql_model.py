@@ -9,30 +9,34 @@ import MySQLdb
 from utils.parse_dburi import parse_db_str
 
 
-class MySQLDB(object):
-    
-    _instance_lock = threading.Lock()
-    _instance = {}
+class MySQLDB(object):
+    
+    _instance_lock = threading.Lock()
+    _instance = {}
+    _firstinit = {}
 
-    def __new__(cls, *args, **kwargs):
-        with cls._instance_lock:
-            if args[0] not in cls._instance:
-                cls._instance[args[0]] = super(MySQLDB, cls).__new__(cls)
-        return cls._instance[args[0]]
+    def __new__(cls, *args, **kwargs):
+        with cls._instance_lock:
+            if args[0] not in cls._instance:
+                cls._instance[args[0]] = super(MySQLDB, cls).__new__(cls)
+        return cls._instance[args[0]]
 
-    def __init__(self, mysql_uri):
-        print(os.environ.get(mysql_uri))
-        mysql_config = parse_db_str(os.environ.get(mysql_uri))
-        self.db = MySQLdb.connect(
-            host = mysql_config['host'],
-            user = mysql_config['user'],
-            passwd = mysql_config['passwd'],
-            db = mysql_config['db']
-        )
-        self.cursor = self.db.cursor()
-    
-    def get_db(self):
-        return (self.db, self.cursor)
+    def __init__(self, mysql_uri):
+        if mysql_uri not in MySQLDB._firstinit:
+            mysql_config = parse_db_str(os.environ.get(mysql_uri))
+            self.db = MySQLdb.connect(
+                host = mysql_config['host'],
+                user = mysql_config['user'],
+                passwd = mysql_config['passwd'],
+                db = mysql_config['db'],
+                charset='utf8'
+            )
+            self.cursor = self.db.cursor()
+            
+            MySQLDB._firstinit[mysql_uri] = True
+    
+    def get_db(self):
+        return (self.db, self.cursor)
         
 
 class MySQLBase(object):

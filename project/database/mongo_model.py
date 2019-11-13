@@ -12,10 +12,11 @@ from utils.tools import datetime2str
 from utils.parse_dburi import parse_db_str
 
 
-class MongoDB(object):
-    
+class MongoDB():
+
     _instance_lock = threading.Lock()
     _instance = {}
+    _firstinit = {}
 
     def __new__(cls, *args, **kwargs):
         with cls._instance_lock:
@@ -24,13 +25,18 @@ class MongoDB(object):
         return cls._instance[args[0]]
 
     def __init__(self, mongo_uri):
-        if not mongo_uri:
-            print('Can\'t get the MongolUri: {0}'.format(mongo_uri))
-        self.mc = MongoClient(os.environ.get(mongo_uri), maxPoolSize=2000)
-        mongo_config = parse_db_str(os.environ.get(mongo_uri))
-        self.db = self.mc.get_database(mongo_config['db'])
-    
+        if mongo_uri not in MongoDB._firstinit:
+            if not mongo_uri:
+                print('Can\'t get the MongolUri: {0}'.format(mongo_uri))
+            self.mc = MongoClient(os.environ.get(mongo_uri), maxPoolSize=2000)
+            mongo_config = parse_db_str(os.environ.get(mongo_uri))
+            self.db = self.mc.get_database(mongo_config['db'])
+
+            MongoDB._firstinit[mongo_uri] = True
+
     def get_db(self):
+        '''
+        '''
         return self.db
 
 
