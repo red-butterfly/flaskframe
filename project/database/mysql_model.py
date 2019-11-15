@@ -22,7 +22,7 @@ class MySQLDB(object):
         return cls._instance[args[0]]
 
     def __init__(self, mysql_uri):
-        if mysql_uri not in MySQLDB._firstinit:
+        if mysql_uri not in MySQLDB._firstinit:
             mysql_config = parse_db_str(os.environ.get(mysql_uri))
             self.db = MySQLdb.connect(
                 host = mysql_config['host'],

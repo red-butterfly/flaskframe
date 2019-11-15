@@ -25,7 +25,7 @@ class MongoDB():
         return cls._instance[args[0]]
 
     def __init__(self, mongo_uri):
-        if mongo_uri not in MongoDB._firstinit:
+        if mongo_uri not in MongoDB._firstinit:
             if not mongo_uri:
                 print('Can\'t get the MongolUri: {0}'.format(mongo_uri))
             self.mc = MongoClient(os.environ.get(mongo_uri), maxPoolSize=2000)

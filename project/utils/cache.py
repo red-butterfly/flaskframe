@@ -60,7 +60,7 @@ class CacheDB(object):
         return cls._instance[args[0]]
 
     def __init__(self, cache_uri, ctype):
-        if cache_uri not in CacheDB._firstinit:
+        if cache_uri not in CacheDB._firstinit:
             if not cache_uri:
                 print('Can\'t get the CachelUri: {0}'.format(cache_uri))
             if ctype == 'redis':
