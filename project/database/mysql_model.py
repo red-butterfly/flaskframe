@@ -7,6 +7,7 @@ import os
 import threading
 import MySQLdb
 from utils.parse_dburi import parse_db_str
+from utils.tools import dict_obj_to_str
 
 
 class MySQLDB(object):
@@ -24,19 +25,19 @@ class MySQLDB(object):
     def __init__(self, mysql_uri):
         if mysql_uri not in MySQLDB._firstinit:
             mysql_config = parse_db_str(os.environ.get(mysql_uri))
-            self.db = MySQLdb.connect(
-                host = mysql_config['host'],
-                user = mysql_config['user'],
-                passwd = mysql_config['passwd'],
-                db = mysql_config['db'],
-                charset='utf8'
-            )
-            self.cursor = self.db.cursor()
+            self.__pool = PooledDB(
+                creator=MySQLdb, mincached=1, maxcached=20,
+                host=mysql_config['host'], port=mysql_config['port'], user=mysql_config['user'],
+                passwd=mysql_config['passwd'],
+                db=mysql_config['db'], use_unicode=False, charset='utf8', 
+                cursorclass=DictCursor
+            )
             
             MySQLDB._firstinit[mysql_uri] = True
     
     def get_db(self):
-        return (self.db, self.cursor)
+        db = self.__pool.connection()
+        return (db, db.cursor())
         
 
 class MySQLBase(object):
@@ -59,4 +60,9 @@ class OAccount(MySQLBase):
             'SELECT user_id,app_secret FROM agt_user WHERE user_type in (1,2)'
         )
 
-        return self.cursor.fetchall()
+        oa_list = []
+        for result in self.cursor.fetchall():
+            json = dict_obj_to_str(result)
+            oa_list.append(json)
+
+        return oa_list

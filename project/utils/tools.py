@@ -175,6 +175,17 @@ def get_pretty_print(obj):
         return obj
 
 
+def dict_obj_to_str(result_dict):
+    """把字典里面的bytes和datetime对象转成字符串，使json转换不出错"""
+    if result_dict:
+        for k, v in result_dict.items():
+            if isinstance(v, bytes):
+                result_dict[k] = str(v, encoding='utf-8')
+            if isinstance(v, datetime.datetime):
+                result_dict[k] = time.mktime(v.timetuple()) * 1000
+    return result_dict
+
+
 class MyEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.ndarray):
